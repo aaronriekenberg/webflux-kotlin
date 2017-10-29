@@ -1,3 +1,3 @@
 package org.aaron.kotlin.webflux.model
 
-class PersonAndID(var id: Int?, var person: Person?)
+class PersonAndID(val id: Int, val person: Person)

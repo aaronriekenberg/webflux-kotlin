@@ -16,12 +16,12 @@ class DummyPersonRepository : PersonRepository {
     private val people = ConcurrentHashMap<Int, Person>()
 
     init {
-        this.people.put(1, Person("John Doe", 42))
-        this.people.put(2, Person("Jane Doe", 36))
+        people.put(1, Person("John Doe", 42))
+        people.put(2, Person("Jane Doe", 36))
     }
 
     override fun getPerson(id: Int): Mono<Person> {
-        return Mono.justOrEmpty(this.people[id])
+        return Mono.justOrEmpty(people[id])
     }
 
     override fun allPeople(): Flux<PersonAndID> =
@@ -35,7 +35,7 @@ class DummyPersonRepository : PersonRepository {
                 val id = people.size + 1
                 done = (people.putIfAbsent(id, person) == null)
                 if (done) {
-                    LOG.info("saved person {} id {}", person, id)
+                    LOG.info("saved person {} id {} new size {}", person, id, people.size)
                 } else {
                     LOG.info("collision saving id {} trying again", id)
                 }
