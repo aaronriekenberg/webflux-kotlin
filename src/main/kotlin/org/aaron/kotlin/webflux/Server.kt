@@ -21,7 +21,7 @@ class Server {
 
         val PORT = 8080
 
-        val LOG = LoggerFactory.getLogger(Server::class.java)
+        private val LOG = LoggerFactory.getLogger(Server::class.java)
 
     }
 
@@ -54,7 +54,6 @@ class Server {
 }
 
 fun main(args: Array<String>) {
-    Server.LOG.info("begin main")
     val server = Server()
     server.startReactorServer()
 
