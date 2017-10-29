@@ -1,0 +1,59 @@
+group 'org.aaron'
+version '1.0-SNAPSHOT'
+
+buildscript {
+    ext {
+        kotlin_version = '1.1.51'
+        reactive_streams_version = '1.0.1'
+        project_reactor_version = '3.1.0.RELEASE'
+        reactor_netty_version = '0.7.0.RELEASE'
+        tomcat_version = '8.5.4'
+        spring_version = '5.0.0.RELEASE'
+        jackson_version = '2.9.1'
+        logback_version = '1.2.3'
+        guava_version = '23.3-jre'
+    }
+
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+//apply plugin: 'java'
+apply plugin: 'kotlin'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
+    compile "org.reactivestreams:reactive-streams:$reactive_streams_version"
+    compile "io.projectreactor:reactor-core:$project_reactor_version"
+    compile "io.projectreactor.ipc:reactor-netty:$reactor_netty_version"
+    compile "org.apache.tomcat.embed:tomcat-embed-core:$tomcat_version"
+    compile "org.springframework:spring-context:$spring_version"
+    compile "org.springframework:spring-webflux:$spring_version"
+    compile "com.fasterxml.jackson.core:jackson-databind:$jackson_version"
+    compile "com.fasterxml.jackson.module:jackson-module-kotlin:$jackson_version"
+    compile "ch.qos.logback:logback-classic:$logback_version"
+    compile "com.google.guava:guava:$guava_version"
+
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+compileKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
+compileTestKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '4.2.1'
+}
