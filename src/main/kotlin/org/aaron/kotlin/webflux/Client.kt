@@ -8,6 +8,7 @@ import org.springframework.http.client.reactive.ReactorClientHttpConnector
 import org.springframework.web.reactive.function.BodyInserters
 import org.springframework.web.reactive.function.client.ClientRequest
 import org.springframework.web.reactive.function.client.ExchangeFunctions
+import reactor.core.publisher.Mono
 import java.net.URI
 
 class Client {
@@ -18,7 +19,7 @@ class Client {
 
     private val exchange = ExchangeFunctions.create(ReactorClientHttpConnector())
 
-    fun printAllPeople() {
+    fun printAllPeople(): Mono<List<PersonAndID>> {
         val uri = URI.create("http://${Server.HOST}:${Server.PORT}/person")
 
         LOG.info("GET uri ${uri}")
@@ -26,10 +27,9 @@ class Client {
         val request = ClientRequest.method(HttpMethod.GET, uri).build()
 
         val people = exchange.exchange(request)
-                .flatMapMany { response -> response.bodyToFlux(PersonAndID::class.java) }
+                .flatMapMany { it.bodyToFlux(PersonAndID::class.java) }
 
-        val peopleList = people.collectList()
-        LOG.info("peopleList = {}", peopleList.block())
+        return people.collectList()
     }
 
     fun createPerson() {
@@ -49,7 +49,20 @@ class Client {
 }
 
 fun main(args: Array<String>) {
+    val log = LoggerFactory.getLogger("main")
+
     val client = Client()
     client.createPerson()
-    client.printAllPeople()
+
+    val list = mutableListOf<Mono<List<PersonAndID>>>()
+    for (i in 0 until 10) {
+        list.add(client.printAllPeople())
+    }
+    log.info("list.size = ${list.size}")
+
+    Mono.zip(list, { results ->
+        for (i in 0 until results.size) {
+            log.info("results[$i] = ${results[i]}")
+        }
+    }).block()
 }
