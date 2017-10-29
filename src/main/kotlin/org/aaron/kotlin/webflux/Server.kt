@@ -30,17 +30,14 @@ class Server {
         val handler = PersonHandler(repository)
 
         return router {
-            path("/person").nest {
-                accept(MediaType.APPLICATION_JSON).nest {
-                    GET("/", handler::listPeople)
-                    GET("/{id}", handler::getPerson)
-                    POST("/").nest {
-                        contentType(MediaType.APPLICATION_JSON, handler::createPerson)
-                    }
-                }
+            (path("/person") and accept(MediaType.APPLICATION_JSON)).nest {
+                GET("/", handler::listPeople)
+                GET("/{id}", handler::getPerson)
+                (POST("/") and contentType(MediaType.APPLICATION_JSON)).invoke(handler::createPerson)
             }
         }
     }
+
 
     fun startReactorServer() {
         val route = routingFunction()
