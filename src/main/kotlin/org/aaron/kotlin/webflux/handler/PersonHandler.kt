@@ -19,7 +19,7 @@ class PersonHandler(private val repository: PersonRepository) {
     fun getPerson(request: ServerRequest): Mono<ServerResponse> {
         LOG.info("getPerson {}", request)
 
-        val personId = request.pathVariable("id")!!.toInt()
+        val personId = request.pathVariable("id").toInt()
         val notFound = ServerResponse.notFound().build()
         val personMono = this.repository.getPerson(personId)
         return personMono

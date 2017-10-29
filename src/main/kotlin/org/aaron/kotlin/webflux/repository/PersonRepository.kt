@@ -11,6 +11,6 @@ interface PersonRepository {
 
     fun allPeople(): Flux<PersonAndID>
 
-    fun savePerson(person: Mono<Person>): Mono<Void>
+    fun savePerson(personMono: Mono<Person>): Mono<Void>
 
 }
