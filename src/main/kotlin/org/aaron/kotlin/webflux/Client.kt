@@ -19,7 +19,7 @@ class Client {
 
     private val exchange = ExchangeFunctions.create(ReactorClientHttpConnector())
 
-    fun printAllPeople(): Mono<List<PersonAndID>> {
+    fun getAllPeople(): Mono<List<PersonAndID>> {
         val uri = URI.create("http://${Server.HOST}:${Server.PORT}/person")
 
         LOG.info("GET uri ${uri}")
@@ -56,13 +56,17 @@ fun main(args: Array<String>) {
 
     val list = mutableListOf<Mono<List<PersonAndID>>>()
     for (i in 0 until 10) {
-        list.add(client.printAllPeople())
+        list.add(client.getAllPeople())
     }
     log.info("list.size = ${list.size}")
 
-    Mono.zip(list, { results ->
-        for (i in 0 until results.size) {
-            log.info("results[$i] = ${results[i]}")
-        }
-    }).block()
+    try {
+        Mono.zip(list, { results ->
+            for (i in 0 until results.size) {
+                log.info("results[$i] = ${results[i]}")
+            }
+        }).block()
+    } catch (e: Exception) {
+        log.warn("zip exception", e)
+    }
 }
